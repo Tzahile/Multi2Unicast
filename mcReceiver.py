@@ -1,8 +1,8 @@
 import socket
 import struct
 
-multicastIP = '224.1.1.1'
-multicastPort = 5007
+multicastIP = '224.0.0.1'
+multicastPort = 11049
 IS_ALL_GROUPS = True
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
