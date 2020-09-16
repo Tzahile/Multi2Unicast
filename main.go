@@ -33,10 +33,11 @@ func main() {
 			ip:   net.ParseIP("224.0.0.1"),
 		},
 	}
+
 	if err := interfaceAdd("Ethernet", candidates, msgHandler); err != nil {
 		log.Printf("main: error: %v", err)
 	}
-
+	sendMessage("224.0.0.1:11049")
 	log.Printf("main: waiting forever")
 	<-make(chan int)
 }
@@ -136,4 +137,27 @@ func udpReader(c *ipv4.PacketConn, ifname, ifaddr string, h func(string, int, []
 	}
 
 	log.Printf("udpReader: exiting '%s'", ifname)
+}
+
+func sendMessage(addr string) {
+	conn, err := newBroadcaster(addr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	conn.Write([]byte("hello, world"))
+}
+
+func newBroadcaster(address string) (*net.UDPConn, error) {
+	addr, err := net.ResolveUDPAddr("udp4", address)
+	if err != nil {
+		return nil, err
+	}
+
+	conn, err := net.DialUDP("udp4", nil, addr)
+	if err != nil {
+		return nil, err
+	}
+
+	return conn, nil
+
 }
